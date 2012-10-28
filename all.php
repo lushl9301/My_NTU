@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
 <head>
 	<link href="style.css" media="screen" rel="stylesheet" type="text/css">
@@ -37,6 +38,9 @@
 	<script type="text/javascript" src="cluster.js"></script>
 	<br/><br/><br/><br/><br/><br/><br/><br/>
 	<p><?php
+	require_once 'db.php';
+	$con = mysql_connect($db_hostname, $db_username, $db_password);
+	mysql_select_db("users",$con);
 	$files = scandir("upload");
 	for ($i=0;$i<count($files);++$i)
 	{
@@ -44,7 +48,12 @@
 		if ($file !='.' and $file !='..')
 			{
 				echo '<h3>'.$file.'</h3>';
-				?><div><table width='100%' border='0' cellspacing='0' cellpadding='0' style='position:relative'><tr><td width='50%'><div id='ol'><textarea cols='2' rows='18' id='li' disabled></textarea></div><textarea name='co' cols='100'rows='18' wrap='off' id='c2'  onblur='check('2')' onkeyup='keyUp()' onscroll='G('li').scrollTop = this.scrollTop;' oncontextmenu='return false'  class='black' ><?php
+	?>
+		<div><table width='100%' border='0' cellspacing='0' cellpadding='0' style='position:relative'>
+		<tr><td width='50%'><div id='ol'>
+		<textarea cols='2' rows='18' id='li' disabled></textarea></div>
+		
+		<textarea name='co' cols='100'rows='18' wrap='off' id='c2'  onblur='check('2')' onkeyup='keyUp()' onscroll='G('li').scrollTop = this.scrollTop;' oncontextmenu='return false'  class='black' ><?php
 				$fh = fopen("upload/".$file, 'r') or
 						die("File cannot open");
 				$line=fgets($fh);
@@ -54,10 +63,21 @@
 						$line=fgets($fh);
 					}
 				fclose($fh);
-				echo "</textarea></td></tr></table></div>";
-				echo "<a href='upload/$file' target='_blank'>see all</a>";
-			}
+				
+				?>
+		</textarea>
+		</td></tr>
+		</table></div>
+		<?php
+			echo "<input style='width:55px;' value='see all' type='button' onClick=".'"window.open('."'"."upload/$file"."','_blank')".'"/>';
 		?>
+		<input style='width:50px;' value='delete' type='button' onClick=
+		<?php
+			$_SESSION['file'] = $file;
+			echo '"'."window.open('del.php','_self')".'"';
+		?>	/>
+		<br/>			
+	<?php } ?>
 		<script language="javascript" type="text/javascript">
 		var msgA=["msg1","msg2","msg3","msg4"];
 		var c=["c1","c2","c3","c4"];
